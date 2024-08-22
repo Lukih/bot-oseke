@@ -1,17 +1,16 @@
-const loadLanguage = require('../loadlanguage.js');
 
-module.exports = async (client, interaction) => {
-  if (!interaction.isCommand()) return;
-
-  const command = client.commands.get(interaction.commandName);
-  if (!command) return;
-
-  try {
-    const lang = loadLanguage; 
-    await command.execute(interaction, client, lang);
-  } catch (error) {
-    console.error(error);
-    const lang = loadLanguage; 
-    await interaction.reply({ content: lang.errorMessage || 'There was an error while executing this command!', ephemeral: true });
-  }
+module.exports = {
+  name: 'interactionCreate',
+  async execute(interaction, client) {
+    if (interaction.isCommand()) {
+      const command = client.commands.get(interaction.commandName);
+      if (!command) return;
+      try {
+        await command.execute(interaction);
+      } catch (error) {
+        console.error('Command Error:', error);
+        await interaction.reply('There was an error executing this command.');
+      }
+    }
+  },
 };
